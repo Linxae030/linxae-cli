@@ -14,8 +14,8 @@ export const trimLeft = (str: string, char: string) => {
 };
 // 反转义
 export const deEscape = (str: string) => {
-    const _deEscape = (char: string) => {
-        switch (char) {
+    return str.replace(/&lt;|&gt;|&#39;|&#34;/g, function (match) {
+        switch (match) {
             case "&lt;":
                 return "<";
             case "&gt;":
@@ -24,13 +24,8 @@ export const deEscape = (str: string) => {
                 return "'";
             case "&#34;":
                 return '"';
-            case "&amp;":
-                return "&";
-            case "$#39;":
-                return "\\";
             default:
-                return "";
+                return match;
         }
-    };
-    return str.replace(/\$#39;|&lt;|&gt;|&quot;|&amp;/g, _deEscape);
+    });
 };

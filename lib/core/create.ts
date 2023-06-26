@@ -3,7 +3,7 @@ import { start } from "@/script";
 import { tcmd } from "@/script";
 export const createCommands = () => {
     program
-        .command("tcmd [pid]")
+        .command("tcmd [qids...]")
         .alias("tm")
         .description("生成 type-challenge md文件 总结模板")
         .action(tcmd);

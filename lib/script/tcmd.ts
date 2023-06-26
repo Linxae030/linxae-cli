@@ -8,22 +8,29 @@ import inquirer from "inquirer";
 import { TC_URL } from "@/config";
 import type { MayBeUndefined } from "@/types";
 
-import { removeFileInDir, getQuestionInfo, compile, writeToFile, notice } from "@/utils";
+import {
+    removeFileInDir,
+    getQuestionInfo,
+    compile,
+    writeToFile,
+    notice,
+    ensureArray
+} from "@/utils";
 import { DATA_PATH, TEMPLATE_PATH } from "@/utils";
 
-export const tcmd = async (qid?: string) => {
-    let curQid: MayBeUndefined<string> = undefined;
+export const tcmd = async (qids?: string[]) => {
+    let curQids: MayBeUndefined<string[]> = undefined;
     // 获取题号
-    if (!qid) {
-        curQid = (
+    if (qids?.length === 0 || !qids) {
+        curQids = (
             await inquirer.prompt({
-                name: "curQid",
+                name: "curQids",
                 type: "input",
-                message: "请输入要生成的题号:"
+                message: "请输入要生成的题号(以空格分割多个):"
             })
-        ).curQid;
-    } else curQid = qid;
-
+        ).curQids.split(" ");
+    } else curQids = ensureArray(qids);
+    if (!curQids![0]) return notice.warning("好像没有题号呢?");
     // 判断是否已下载题库
     if (!fs.existsSync(DATA_PATH)) {
         const downloader = ora("开始下载 type-challenges 题库...");
@@ -35,10 +42,16 @@ export const tcmd = async (qid?: string) => {
                 const remover = ora("开始处理 type-challenges 题库...");
                 await removeFileInDir(DATA_PATH, ["questions"]);
                 remover.succeed("预处理完成");
-                return await generateMdTemplate(curQid!);
+                await loopQids(curQids!);
             }
         });
-    } else return await generateMdTemplate(curQid!);
+    } else return await loopQids(curQids!);
+};
+
+const loopQids = async (qids: string[]) => {
+    for (const qid of qids) {
+        await generateMdTemplate(qid!);
+    }
 };
 
 // 生成 md 模板文件

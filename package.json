@@ -1,9 +1,9 @@
 {
     "name": "linxae-cli",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "private": false,
     "description": "一些自用小工具",
-    "main": "./dist/index.js",
+    "main": "./bin/index.js",
     "author": "Linxae (https://github.com/Linxaee)",
     "homepage": "https://github.com/Linxaee/linxae-cli",
     "bin": {
